@@ -165,6 +165,40 @@ async function initDatabase() {
       )
     `);
 
+    // 图像生成历史表
+    await connection.execute(`
+      CREATE TABLE IF NOT EXISTS image_generations (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT,
+        prompt TEXT NOT NULL,
+        image_url VARCHAR(500),
+        revised_prompt TEXT,
+        model VARCHAR(255),
+        ratio VARCHAR(20) DEFAULT '1:1',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+      )
+    `);
+
+    // 视频生成任务表
+    await connection.execute(`
+      CREATE TABLE IF NOT EXISTS video_generations (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT,
+        prompt TEXT NOT NULL,
+        task_id VARCHAR(255) UNIQUE,
+        status ENUM('processing', 'completed', 'failed') DEFAULT 'processing',
+        reference_images JSON,
+        duration INT DEFAULT 5,
+        video_url VARCHAR(500),
+        error_message TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+      )
+    `);
+
     console.log('数据库表创建完成');
   } catch (err) {
     console.error('数据库表创建失败:', err.message);

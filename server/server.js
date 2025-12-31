@@ -13,6 +13,9 @@ const sceneRoutes = require('./routes/scenes');
 const propRoutes = require('./routes/props');
 const effectRoutes = require('./routes/effects');
 const videoRoutes = require('./routes/videos');
+const imageRoutes = require('./routes/images');
+const soraRoutes = require('./routes/sora');
+const uploadRoutes = require('./routes/upload');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -52,6 +55,10 @@ app.use('/api/projects/:projectId/videos', videoRoutes);
 // 兼容前端的API调用方式
 app.use('/api/assets/characters', characterRoutes);
 app.use('/api/assets/videos', videoRoutes);
+// 新增AI相关API路由
+app.use('/api/images', imageRoutes);
+app.use('/api/sora', soraRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // 根路径健康检查
 app.get('/api', (req, res) => {
