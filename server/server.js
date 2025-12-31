@@ -3,7 +3,7 @@ const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
 
-const { db, initDatabase } = require('./database');
+const { initDatabase, testConnection } = require('./database');
 
 // 导入路由
 const authRoutes = require('./routes/auth');
@@ -23,7 +23,23 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // 初始化数据库
-initDatabase();
+async function startServer() {
+  try {
+    await testConnection();
+    await initDatabase();
+    console.log('数据库连接和初始化成功');
+  } catch (error) {
+    console.error('数据库连接或初始化失败:', error);
+    process.exit(1);
+  }
+  
+  app.listen(PORT, () => {
+    console.log(`服务器运行在端口 ${PORT}`);
+    console.log(`API 基础路径: http://localhost:${PORT}/api`);
+  });
+}
+
+startServer();
 
 // API 路由
 app.use('/api/auth', authRoutes);
@@ -53,21 +69,3 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: '服务器内部错误' });
 });
 
-// 启动服务器
-app.listen(PORT, () => {
-  console.log(`服务器运行在端口 ${PORT}`);
-  console.log(`API 基础路径: http://localhost:${PORT}/api`);
-});
-
-// 优雅关闭
-process.on('SIGINT', () => {
-  console.log('\n正在关闭服务器...');
-  db.close((err) => {
-    if (err) {
-      console.error('关闭数据库连接时出错:', err);
-    } else {
-      console.log('数据库连接已关闭');
-    }
-    process.exit(0);
-  });
-});
