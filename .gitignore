@@ -5,7 +5,7 @@ node_modules/
 # Environment
 .env
 .env.local
-*.env.*
+.env.*
 
 # Logs
 *.log
@@ -27,28 +27,8 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-*.py.class
 .Python
-env/
-venv/
-.venv/
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Coverage
-.coverage
-coverage/
-htmlcov/
-
-# Testing
-.nyc_output/
-coverage-final.json
-.pytest_cache/
-.mypy_cache/
-
-# OS
-.DS_Store
-Thumbs.db
+*.so
 
 # Compressed files
 *.zip
